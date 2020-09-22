@@ -13,6 +13,7 @@ import com.util.DistanceFunctionFactory;
  */
 public class DTW {
 
+	
 	public static double getWarpDistBetween(double[] a, double[] b) {
 		
 		final TimeSeries ta = new TimeSeries(a);
@@ -32,5 +33,47 @@ public class DTW {
 		return FastDTW.getWarpDistBetween(ta, tb, df);
 		
 	}
+	
+	public static double getMSE(double[] a, double[] b) {
+
+		if (a.length != b.length)
+			throw new RuntimeException(
+					"in order to compute MSE, your series should have the same length, "
+					+ "but we found "+a.length+" and "+b.length);
+		
+		double total = 0;
+		
+		for (int i=0; i<a.length; i++) {
+			total += Math.pow( a[i] - b[i], 2 );
+		}
+		
+		return total / a.length;
+		
+	}
+	
+	public static double getRMSE(double[] a, double[] b) {
+		
+		return Math.sqrt(getMSE(a,b));
+		
+	}
+	
+	
+	public static double getMAE(double[] a, double[] b) {
+
+		if (a.length != b.length)
+			throw new RuntimeException(
+					"in order to compute MAE, your series should have the same length, "
+					+ "but we found "+a.length+" and "+b.length);
+		
+		double total = 0;
+		
+		for (int i=0; i<a.length; i++) {
+			total += Math.abs( a[i] - b[i] );
+		}
+		
+		return total / a.length;
+		
+	}
+	
 	
 }
