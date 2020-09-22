@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: dtw
+Bundle-SymbolicName: openmole.plugin.dtw;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Samuel Thiriot
+Automatic-Module-Name: openmole.plugin.dtw
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: ch.resear.samthiriot.openmole.plugins.dtw
+Bundle-ClassPath: bin/,
+ .
