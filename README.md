@@ -18,10 +18,11 @@ And wraps it as an [osgi plugin](https://en.wikipedia.org/wiki/OSGi) so it can b
 
 * download [the last release](./releases/latest)
 * in the GUI of OpenMOLE, load the plugin
+that's all folks.
 
 ## Use it  
 
-The typical usage is from an OpenMOLE [ScalaTask](https://next.openmole.org/Scala.html).
+The typical usage from OpenMOLE [ScalaTask](https://next.openmole.org/Scala.html) is:
 
 ```
 val simulatedCurve = Val[Array[Double]]
@@ -31,9 +32,10 @@ val diffDWT = Val[Double]
 val diffMSE = Val[Double]
 
 
-val dwtTask = ScalaTask("""
-    val diffDWT = ch.resear.samthiriot.openmole.plugins.dtw.DTW.getFastWarpDistBetween(simulatedCurve, refCurve)
-    val diffMSE = ch.resear.samthiriot.openmole.plugins.dtw.DTW.getMSE(simulatedCurve, refCurve)
+val compareSeriesTask = ScalaTask("""
+    import ch.resear.samthiriot.openmole.plugins.dtw.DTW
+    val diffDWT = DTW.getFastWarpDistBetween(simulatedCurve, refCurve)
+    val diffMSE = DTW.getMSE(simulatedCurve, refCurve)
     """) set (
         
     inputs += simulatedCurve,
@@ -44,18 +46,30 @@ val dwtTask = ScalaTask("""
     
     plugins += pluginsOf[ch.resear.samthiriot.openmole.plugins.dtw.DTW],
     
-    simulatedCurve := Array(0.0,0.1,0.2,0.5,0.3,0.1,0.0,0.0),
-    refCurve := Array(0.1,0.2,0.5,0.3,0.1,0.0,0.0,0.0)
+    simulatedCurve := Array(0.0,0.0,0.1,0.2,0.5,0.3,0.1,0.0,0.0),
+    refCurve := Array(0.0,0.1,0.2,0.5,0.3,0.1,0.0,0.0,0.0)
 )
 
 
-sumTask hook DisplayHook()
+compareSeriesTask hook DisplayHook()
 ```
 
 The available metrics are:
-* [Dynamic Time Warping](https://en.wikipedia.org/wiki/Dynamic_time_warping): `DTW.getWarpDistBetween[Array(Double),Array(Double)]`
-* [Fast Dynamic Time Warping](https://en.wikipedia.org/wiki/Dynamic_time_warping): `DTW.getFastWarpDistBetween[Array(Double),Array(Double)]`
-* [Mean Squared Error](https://en.wikipedia.org/wiki/Mean_squared_error): `DTW.getMSE[Array(Double),Array(Double)]`
-* Squared Mean Squared Error: `DTW.getRMSE[Array(Double),Array(Double)]` 
-* [Mean absolute error](https://en.wikipedia.org/wiki/Mean_absolute_error):`DTW.getMAE[Array(Double),Array(Double)]`
+* [Dynamic Time Warping](https://en.wikipedia.org/wiki/Dynamic_time_warping): `DTW.getWarpDistBetween(Array[Double],Array[Double]):Double`
+* [Fast Dynamic Time Warping](https://en.wikipedia.org/wiki/Dynamic_time_warping): `DTW.getFastWarpDistBetween(Array[Double],Array[Double]):Double`
+* [Mean Squared Error](https://en.wikipedia.org/wiki/Mean_squared_error): `DTW.getMSE(Array[Double],Array[Double]):Double`
+* Squared Mean Squared Error: `DTW.getRMSE(Array[Double],Array[Double]):Double` 
+* [Mean absolute error](https://en.wikipedia.org/wiki/Mean_absolute_error):`DTW.getMAE(Array[Double],Array[Double]):Double`
+*  Get the MSE difference between curves after normalization: `DTW.getMSEBetweenNormalized(Array[Double],Array[Double]):Double`
+
+In case you want to execute that as part of an optimization method, remember you can chain your simulation and a task comparing the series. In the next example, `model` might export series, and `compareSeriesTask` might compute the difference between the simulated serie and the expected one, and return `o1` and `o2` as aggregate goals to minimize:
+
+```
+  NSGA2Evolution(
+    [...]
+    objective = Seq(o1, o2), 
+    evaluation = model -- compareSeriesTask
+    [...]
+  )
+```
 

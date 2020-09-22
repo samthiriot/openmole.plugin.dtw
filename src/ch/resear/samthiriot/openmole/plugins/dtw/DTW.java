@@ -34,6 +34,38 @@ public class DTW {
 		
 	}
 	
+	public static double getSum(double[] a) {
+		
+		double total = 0;
+		for (int i=0; i<a.length; i++) {
+			total += a[i];
+		}
+		return total;
+	}
+	
+
+	public static double[] getNormalized(double[] a) {
+		
+		double sum = getSum(a);
+		double[] res = a.clone();
+		
+		for (int i=0; i<a.length; i++)
+			res[i] = a[i]/sum;
+		
+		return res;
+	}
+	
+	
+	public static double getMSEBetweenNormalized(double[] a, double[] b) {
+
+		double[] a_norm = getNormalized(a);
+		double[] b_norm = getNormalized(b);
+		
+		return getMSE(a_norm, b_norm);
+		
+	}
+		
+	
 	public static double getMSE(double[] a, double[] b) {
 
 		if (a.length != b.length)
