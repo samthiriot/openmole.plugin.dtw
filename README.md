@@ -24,7 +24,7 @@ that's all folks.
 
 The typical usage from OpenMOLE [ScalaTask](https://next.openmole.org/Scala.html) is:
 
-```
+```scala
 val simulatedCurve = Val[Array[Double]]
 val refCurve = Val[Array[Double]]
 
@@ -64,7 +64,7 @@ The available metrics are:
 
 In case you want to execute that as part of an optimization method, remember you can chain your simulation and a task comparing the series. In the next example, `model` might export series, and `compareSeriesTask` might compute the difference between the simulated serie and the expected one, and return `o1` and `o2` as aggregate goals to minimize:
 
-```
+```scala
   NSGA2Evolution(
     [...]
     objective = Seq(o1, o2), 
